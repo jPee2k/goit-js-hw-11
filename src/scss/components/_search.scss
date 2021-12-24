@@ -1,0 +1,43 @@
+.search {
+  display: flex;
+  justify-content: center;
+  max-width: 320px;
+
+  margin: 0 auto;
+}
+
+.search__input {
+  flex: 1;
+}
+
+#search-box {
+  font: inherit;
+  padding: 8px;
+  padding-right: 40px;
+  width: 320px;
+}
+
+label[for="search-box"] {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  margin-bottom: 30px;
+
+  .spinner {
+    position: absolute;
+    right: 8px;
+
+    @include v-hidden;
+
+    transition:
+      opacity 180ms ease-in-out,
+      visibility 180ms ease-in-out;
+  }
+
+  .spinner.spinner--shown {
+    @include v-shown;
+    animation:  1.5s linear infinite rotate;
+  }
+}

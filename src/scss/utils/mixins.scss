@@ -1,0 +1,23 @@
+@mixin reset-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin v-hidden {
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+}
+
+@mixin v-shown {
+  pointer-events: auto;
+  visibility: visible;
+  opacity: 1;
+}
