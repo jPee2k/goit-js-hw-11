@@ -10,6 +10,7 @@ export default () => {
     searchForm: document.querySelector('#search-form'),
     searchInput: document.querySelector('#search-form input[name="searchQuery"]'),
     gallery: document.querySelector('.gallery'),
+    scrollButton: document.querySelector('[data-button="search-form"]'),
   };
 
   const searchButton = new Button('#search-form button[type="submit"]');
@@ -69,6 +70,20 @@ export default () => {
     }
   };
 
+  const onScrollButtonClick = (evt) => {
+    const elementID = evt.currentTarget.dataset.button;
+    const el = document.querySelector(`#${elementID}`);
+    el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  };
+
   elements.searchForm.addEventListener('submit', onSearchFormSubmit);
   loadMoreButton.elements.button.addEventListener('click', onLoadMoreClickButton);
+  elements.scrollButton.addEventListener('click', onScrollButtonClick);
+
+  window.addEventListener('scroll', () => {
+    const scrolled = window.pageYOffset;
+    const coords = document.documentElement.clientHeight;
+    scrolled > coords && elements.scrollButton.classList.add('is-visible');
+    scrolled < coords && elements.scrollButton.classList.remove('is-visible');
+  });
 };

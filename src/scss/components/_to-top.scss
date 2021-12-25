@@ -1,0 +1,30 @@
+.to-top {
+  position: fixed;
+  top: 85vh;
+  right: 40px;
+
+  @include v-hidden;
+
+  cursor: pointer;
+
+  appearance: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
+
+  transition:
+    opacity 300ms ease-in-out,
+    visibility 300ms ease-in-out;
+
+  &:not(:disabled) {
+    &:hover,
+    &:focus-visible {
+      animation: 250ms ease-in 2 alternate double-jump;
+    }
+  }
+
+  &.is-visible {
+    @include v-shown;
+  }
+}
