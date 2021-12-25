@@ -24,7 +24,7 @@ export default class PixabayApiService {
     } = params;
 
     this.data = {};
-    this.url = new URL('/api', BASE_URL);
+    this.url = new URL('/api/', BASE_URL);
     this.searchParams = {
       key: API_KEY,
       q: searchQuery,
