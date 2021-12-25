@@ -1,0 +1,52 @@
+.button {
+  padding: 8px 16px;
+  height: 50px;
+
+  font-size: 1.3em;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: whitesmoke;
+
+  appearance: none;
+
+  border: none;
+  border-radius: 6px;
+  background-color: $main-color;
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
+
+  transition:
+    background-color 120ms linear,
+    box-shadow 120ms linear,
+    visible 120ms linear,
+    opacity 120ms linear;
+
+  &:not(:disabled) {
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+      background-color: #3674aa;
+      box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  &:disabled {
+    opacity: 0.4;
+  }
+
+  &.is-load .spinner {
+    display: initial;
+  }
+
+  &:not(.is-load) .spinner {
+    display: none;
+  }
+}
+
+[data-button="load-more"] {
+  @include flex-center;
+  gap: 10px;
+  margin: 0 auto;
+
+  min-width: 200px;
+}

@@ -1,0 +1,39 @@
+.photo-card {
+  position: relative;
+  min-height: 250px;
+}
+
+.photo-card .info {
+  position: absolute;
+  bottom: 0;
+
+  display: flex;
+  justify-content: space-evenly;
+  gap: 10px;
+  align-items: center;
+
+  width: 100%;
+  min-height: 30px;
+  padding: 10px;
+
+  color: whitesmoke;
+  font-size: 16px;
+
+  background-color: $caption-bg-color;
+}
+
+.photo-card .info-item {
+  @include flex-center;
+  flex-direction: column;
+
+  margin: 0;
+  padding: 0;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sl-caption {
+  background-color: $caption-bg-color !important;
+}

@@ -51,3 +51,11 @@ img {
     object-fit: cover;
   }
 }
+
+.is-hidden {
+  @include v-hidden;
+}
+
+.spinner {
+  animation: 1.5s ease-in-out infinite rotate;
+}

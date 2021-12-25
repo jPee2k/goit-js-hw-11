@@ -1,75 +1,74 @@
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
-import debounce from 'lodash.debounce';
-import fetchCountries from './countries-api.js';
+import SimpleLightbox from 'simplelightbox';
+import PixabayApiService from './PixabayApiService.js';
+import Button from './Button.js';
+import { renderImages, renderNotify, clearPage } from './view.js';
 
-import countryCard from '../templates/countryCard.hbs';
-import listOfCountries from '../templates/listOfCountries.hbs';
-
-const DEBOUNCE_DELAY = 300;
-const MAX_RENDERED_COUNTRIES_COUNT = 10;
-const FULL_RENDERED_COUNTRIES_COUNT = 1;
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 export default () => {
   const elements = {
-    search: document.querySelector('#search-box'),
-    list: document.querySelector('.country-list'),
-    info: document.querySelector('.country-info'),
+    searchForm: document.querySelector('#search-form'),
+    searchInput: document.querySelector('#search-form input[name="searchQuery"]'),
+    gallery: document.querySelector('.gallery'),
   };
 
-  const onSearchInput = (evt) => {
-    evt.preventDefault();
-    clearSearchResults(elements);
-    const value = evt.target.value.trim();
+  const searchButton = new Button('#search-form button[type="submit"]');
+  const loadMoreButton = new Button('[data-button="load-more"]', true);
+  const pixabayService = new PixabayApiService({
+    safesearch: false,
+  });
+  const lightbox = new SimpleLightbox('.gallery .photo-card', {
+    disableRightClick: true,
+    captionDelay: 250,
+  });
 
-    if (!value) {
+  let pageData = {};
+
+  const onSearchFormSubmit = async (evt) => {
+    evt.preventDefault();
+    pixabayService.searchQuery = evt.target.elements.searchQuery.value.trim();
+
+    if (!pixabayService.searchQuery) {
       return;
     }
-    addSpinner(elements.search);
 
-    fetchCountries(value)
-      .then((data) => {
-        callNotify(data);
-        removeSpinner(elements.search);
-        renderCountriesData(elements, data);
-      })
-      .catch(() => {
-        Notify.failure('Sorry, but there are no results for your search');
-        removeSpinner(elements.search);
-      });
+    searchButton.disable();
+    clearPage(evt.target, elements.gallery, loadMoreButton);
+
+    try {
+      const response = await pixabayService.fetchImages();
+      pageData = pixabayService.getPagesInfo();
+      renderNotify('success', pageData.totalHits);
+      renderImages(elements.gallery, response.data.hits);
+      lightbox.refresh();
+      loadMoreButton.toggle(pageData);
+    } catch (err) {
+      renderNotify('error');
+    } finally {
+      searchButton.enable();
+    }
   };
 
-  elements.search.addEventListener('input', debounce(onSearchInput, DEBOUNCE_DELAY));
+  const onLoadMoreClickButton = async (evt) => {
+    evt.preventDefault();
+
+    if (!pixabayService.searchQuery) {
+      return;
+    }
+
+    loadMoreButton.disable().addLoader();
+    try {
+      const response = await pixabayService.incrementPage().fetchImages();
+      pageData = pixabayService.getPagesInfo();
+      renderImages(elements.gallery, response.data.hits);
+      lightbox.refresh();
+    } catch (err) {
+      renderNotify('error');
+    } finally {
+      loadMoreButton.removeLoader().enable().toggle(pageData);
+    }
+  };
+
+  elements.searchForm.addEventListener('submit', onSearchFormSubmit);
+  loadMoreButton.elements.button.addEventListener('click', onLoadMoreClickButton);
 };
-
-function renderCountriesData({ search, list, info }, data) {
-  const countriesCount = data.length;
-
-  if (countriesCount === FULL_RENDERED_COUNTRIES_COUNT) {
-    info.innerHTML = countryCard(data[0]);
-  } else if (countriesCount > FULL_RENDERED_COUNTRIES_COUNT && countriesCount <= MAX_RENDERED_COUNTRIES_COUNT) {
-    list.innerHTML = listOfCountries(data);
-  }
-}
-
-function callNotify({ length: countriesCount } = 0) {
-  if (countriesCount > MAX_RENDERED_COUNTRIES_COUNT) {
-    Notify.info('Too many matches found. Please enter a more specific name.');
-  } else {
-    Notify.info(`${countriesCount} matches found for your request`);
-  }
-}
-
-function clearSearchResults(elements) {
-  elements.list.innerHTML = '';
-  elements.info.innerHTML = '';
-}
-
-function addSpinner(el) {
-  const spinner = el.parentElement.querySelector('.spinner');
-  spinner && spinner.classList.add('spinner--shown');
-}
-
-function removeSpinner(el) {
-  const spinner = el.parentElement.querySelector('.spinner');
-  spinner && spinner.classList.remove('spinner--shown');
-}
