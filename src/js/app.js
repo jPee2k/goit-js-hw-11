@@ -1,7 +1,7 @@
 import SimpleLightbox from 'simplelightbox';
 import PixabayApiService from './PixabayApiService.js';
 import Button from './Button.js';
-import { renderImages, renderNotify, clearPage } from './view.js';
+import { renderImages, renderNotify, clearPage, scrollToNextRow } from './view.js';
 
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
@@ -63,6 +63,7 @@ export default () => {
       pageData = pixabayService.getPagesInfo();
       renderImages(elements.gallery, response.data.hits);
       lightbox.refresh();
+      scrollToNextRow(elements.gallery);
     } catch (err) {
       renderNotify('error');
     } finally {

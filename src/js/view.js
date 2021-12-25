@@ -40,3 +40,12 @@ export const clearPage = (form, gallery, button) => {
   form.reset();
   gallery.innerHTML = '';
 };
+
+export const scrollToNextRow = (gallery) => {
+  const { height: cardHeight } = gallery.firstElementChild.getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
+};
