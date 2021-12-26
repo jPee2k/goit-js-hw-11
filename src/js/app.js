@@ -19,7 +19,6 @@ export default () => {
     safesearch: false,
   });
   const lightbox = new SimpleLightbox('.gallery .photo-card', {
-    disableRightClick: true,
     captionDelay: 250,
   });
 
